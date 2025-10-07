@@ -469,14 +469,48 @@ class NetworkVisualizer:
 
         return stats
     
-    def save_visualization(self, output_path: str, include_routing: bool = True):
+    def create_dynamic_visualization(self, output_path: str):
+        """
+        Create a dynamic D3.js force-directed graph visualization
+
+        Args:
+            output_path: Path for output HTML file
+        """
+        import os
+
+        # Load the template
+        template_path = os.path.join(os.path.dirname(__file__), 'templates', 'dynamic_network.html')
+
+        try:
+            with open(template_path, 'r') as f:
+                template = f.read()
+        except FileNotFoundError:
+            logger.error(f"Dynamic visualization template not found at {template_path}")
+            return False
+
+        # Inject topology data as JSON
+        topology_json = json.dumps(self.topology_data, indent=2, default=str)
+        html_content = template.replace('{{TOPOLOGY_DATA}}', topology_json)
+
+        # Write output file
+        with open(output_path, 'w') as f:
+            f.write(html_content)
+
+        logger.info(f"Dynamic visualization saved to {output_path}")
+        return True
+
+    def save_visualization(self, output_path: str, include_routing: bool = True, dynamic: bool = False):
         """
         Save visualization to HTML file
 
         Args:
             output_path: Path for output HTML file
-            include_routing: If True, also create routing paths visualization
+            include_routing: If True, also create routing paths visualization (only for static)
+            dynamic: If True, create dynamic D3.js visualization instead of static Plotly
         """
+        if dynamic:
+            return self.create_dynamic_visualization(output_path)
+
         fig = self.create_interactive_plot()
         if fig:
             fig.write_html(output_path)

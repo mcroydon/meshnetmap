@@ -78,12 +78,12 @@ def aggregate_command(args):
 def visualize_command(args):
     """Handle visualize command"""
     visualizer = NetworkVisualizer()
-    
+
     if not visualizer.load_topology(args.input):
         return
-    
+
     visualizer.build_network_graph()
-    
+
     # Print statistics
     stats = visualizer.get_network_statistics()
     print(f"\n{'='*50}")
@@ -93,12 +93,20 @@ def visualize_command(args):
     print(f"Connections: {stats['edges']}")
     print(f"Average Degree: {stats['avg_degree']:.2f}")
     print(f"Network Density: {stats['density']:.3f}")
-    
+
     if args.output:
-        visualizer.save_visualization(args.output)
-    
+        visualizer.save_visualization(args.output, dynamic=args.dynamic)
+
     if args.show or not args.output:
-        visualizer.display_visualization()
+        if args.dynamic:
+            import webbrowser
+            import os
+            output = args.output or 'temp_visualization.html'
+            if not args.output:
+                visualizer.create_dynamic_visualization(output)
+            webbrowser.open('file://' + os.path.abspath(output))
+        else:
+            visualizer.display_visualization()
 
 
 def main():
@@ -208,25 +216,35 @@ Examples:
                                  help='Output filename for aggregated data')
     
     # Visualize command
-    viz_parser = subparsers.add_parser('visualize', 
+    viz_parser = subparsers.add_parser('visualize',
                                       help='Visualize network topology as interactive graph',
                                       formatter_class=argparse.RawDescriptionHelpFormatter,
                                       epilog="""
 Examples:
   # Display visualization in browser
   %(prog)s -i data/network_topology.json --show
-  
+
   # Save visualization to HTML file
   %(prog)s -i data/network_topology.json -o network.html
-  
+
+  # Create dynamic D3.js visualization with physics
+  %(prog)s -i data/network_topology.json -o network.html --dynamic
+
   # Both display and save
-  %(prog)s -i data/network_topology.json -o network.html --show
+  %(prog)s -i data/network_topology.json -o network.html --show --dynamic
 
 The visualization shows:
   - Nodes colored by hop distance
   - Connections colored by signal quality (SNR)
   - Interactive hover information
   - Network statistics
+
+Dynamic mode (--dynamic) features:
+  - Physics-based force-directed layout (avoids overlaps)
+  - Click nodes to center and highlight neighbors
+  - Click edges to see connection details
+  - Adjustable physics parameters
+  - Drag nodes to reposition
                                       """)
     viz_parser.add_argument('--input', '-i', required=True, metavar='FILE',
                            help='Input topology JSON file')
@@ -234,6 +252,8 @@ The visualization shows:
                            help='Output HTML file for saving visualization')
     viz_parser.add_argument('--show', action='store_true',
                            help='Open visualization in web browser')
+    viz_parser.add_argument('--dynamic', action='store_true',
+                           help='Create dynamic D3.js force-directed visualization')
     
     args = parser.parse_args()
     
