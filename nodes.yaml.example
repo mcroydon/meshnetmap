@@ -1,0 +1,15 @@
+# Example configuration for collecting from multiple Meshtastic nodes
+# Copy to nodes.yaml and update with your device addresses
+
+nodes:
+  - name: "Node 1"
+    address: "AA:BB:CC:DD:EE:FF"  # Bluetooth address or device name
+    duration: 30  # Collection duration in seconds
+    
+  - name: "Node 2"
+    address: "11:22:33:44:55:66"
+    duration: 30
+    
+  - name: "Node 3"
+    address: "Meshtastic_1234"  # Can also use device name
+    duration: 45
