@@ -99,10 +99,44 @@ def infer_connections_from_hops(topology_data):
     connections = []
     connection_set = set()  # Track unique connections to avoid duplicates
 
+    # Special case: Connect collection source (hopsAway: -1) to collection node (hopsAway: 0)
+    # These are always physically co-located (Bluetooth connection)
+    collection_sources = [n for n in topology_data['nodes'].items() if n[1].get('hopsAway') == -1]
+    collection_nodes = [n for n in topology_data['nodes'].items() if n[1].get('hopsAway') == 0]
+
+    if collection_sources and collection_nodes:
+        print("\nConnecting collection source to collection node(s):")
+        for source_id, source_info in collection_sources:
+            for node_id, node_info in collection_nodes:
+                conn_key = tuple(sorted([source_id, node_id]))
+                if conn_key in connection_set:
+                    continue
+
+                source_name = source_info.get('user', {}).get('longName', source_id[:8])
+                node_name = node_info.get('user', {}).get('longName', node_id[:8])
+
+                # Use collection node's SNR or assume excellent
+                snr = node_info.get('snr') or 10.0
+
+                connection = {
+                    'from': node_id,  # Collection node (hopsAway: 0) as source
+                    'to': source_id,  # Collection source (hopsAway: -1) as target
+                    'snr': snr,
+                    'type': 'colocated',
+                    'confidence': 'high',
+                    'hops_away': 0,
+                    'evidence': 'bluetooth_connection',
+                    'evidence_count': 1,
+                    'timestamp': datetime.now().isoformat()
+                }
+                connections.append(connection)
+                connection_set.add(conn_key)
+                print(f"  {source_name} ↔ {node_name} (Bluetooth collection pair)")
+
     # Create connections for co-located nodes
     # These are physically at the same location, so they should be directly connected
     if colocated:
-        print("\nCreating connections for co-located nodes:")
+        print("\nCreating connections for co-located nodes (GPS-based):")
         for loc, nodes in colocated:
             # Connect all nodes at this location to each other
             for i, (node1_id, node1_info) in enumerate(nodes):

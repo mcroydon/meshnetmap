@@ -59,14 +59,6 @@ class NetworkTopologyCollector:
                 pin = "123456"  # Default Meshtastic PIN
                 logger.info(f"Using default PIN: {pin}")
             
-            # Note for macOS users about pairing
-            logger.info("Note: On macOS, you may need to pair the device first:")
-            logger.info("  1. Open System Preferences > Bluetooth")
-            logger.info("  2. Find your Meshtastic device and click 'Connect'")
-            logger.info(f"  3. If prompted for a PIN, enter: {pin}")
-            logger.info("  4. Wait for pairing to complete")
-            logger.info("")
-            
             self.interface = meshtastic.ble_interface.BLEInterface(address)
             
             # Subscribe to packet reception
@@ -87,12 +79,6 @@ class NetworkTopologyCollector:
                 logger.error("")
                 logger.error("PAIRING REQUIRED:")
                 logger.error("The device requires pairing for encrypted communication.")
-                logger.error("Please follow these steps:")
-                logger.error("  1. Open System Settings > Bluetooth on macOS")
-                logger.error("  2. Find '🫘_e885' or your Meshtastic device")
-                logger.error("  3. Click 'Connect' or 'Pair'")
-                logger.error(f"  4. If prompted for a PIN, enter: {pin or '123456'}")
-                logger.error("  5. After pairing is complete, run this command again")
                 logger.error("")
                 logger.error("Alternative: Use the --pin flag to specify a different PIN")
             return False
