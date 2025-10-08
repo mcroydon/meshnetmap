@@ -162,6 +162,6 @@ The `infer` command adds a `connections` array to the topology JSON:
 
 ## Documentation
 
-- `DYNAMIC_VIZ.md` - Detailed documentation of dynamic visualization features
-- `CO_LOCATION_FIX.md` - Co-location detection implementation details
-- `FINAL_SUMMARY.md` - Complete feature summary
+- [Dynamic Visualization](docs/DYNAMIC_VIZ.md) - Detailed documentation of dynamic visualization features
+- [Co-location Detection](docs/CO_LOCATION_FIX.md) - Co-location detection implementation details
+- [Inference Features](docs/INFERENCE.md) - Connection inference and topology analysis

@@ -1,8 +1,8 @@
-# Dynamic Visualization Implementation - Final Summary
+# Connection Inference and Topology Analysis
 
 ## Overview
 
-Successfully implemented a dynamic, physics-based network visualization for meshnetmap with co-located node detection and accurate multi-hop topology inference.
+This document describes the connection inference features in meshnetmap, including co-located node detection, multi-hop path inference, and dynamic physics-based visualization.
 
 ## Key Features Implemented
 
@@ -16,7 +16,7 @@ Successfully implemented a dynamic, physics-based network visualization for mesh
 ### 2. **Co-Located Node Detection**
 **Problem:** Collection source nodes (e.g., "Cool 🫘" with `hopsAway: -1`) weren't connected to collection nodes at the same physical location.
 
-**Solution:** Added GPS-based co-location detection in `infer_connections_v2.py`:
+**Solution:** Added GPS-based co-location detection in `meshnetmap/inference.py`:
 - Detects nodes at the same GPS coordinates (±11m precision)
 - Automatically creates connections between all co-located nodes
 - Connection type: `colocated`, confidence: `high`, evidence: `same_gps_location`
@@ -27,7 +27,7 @@ Successfully implemented a dynamic, physics-based network visualization for mesh
 - Cool 🫘 ↔ Cedar Park 🦙 now properly connected
 
 ### 3. **Improved Multi-Hop Inference**
-Enhanced `infer_connections_v2.py` with routing validation:
+Enhanced `meshnetmap/inference.py` with routing validation:
 - Uses `routing_paths` data to validate inferred connections
 - Limits to top 1-2 most likely intermediate routers
 - Confidence levels: high (routing validated), medium (good SNR), low (best guess)
@@ -87,23 +87,23 @@ Enhanced `infer_connections_v2.py` with routing validation:
 
 ### New Files:
 - `meshnetmap/visualizer/templates/dynamic_network.html` - D3.js visualization template
+- `meshnetmap/inference.py` - Connection inference with co-location detection and routing validation
 - `test_dynamic_viz.py` - Simple test script for generating visualizations
-- `DYNAMIC_VIZ.md` - Comprehensive documentation
-- `CO_LOCATION_FIX.md` - Co-location detection documentation
-- `FINAL_SUMMARY.md` - This file
+- `docs/DYNAMIC_VIZ.md` - Comprehensive documentation
+- `docs/CO_LOCATION_FIX.md` - Co-location detection documentation
+- `docs/INFERENCE.md` - This file
 
 ### Modified Files:
-- `infer_connections_v2.py` - Added co-location detection and routing validation
 - `meshnetmap/visualizer/display.py` - Added `create_dynamic_visualization()` method
-- `meshnetmap/cli.py` - Added `--dynamic` flag to visualize command
+- `meshnetmap/cli.py` - Added `--dynamic` flag to visualize command and `infer` command
 
 ## Usage
 
 ### Command Line
 
 ```bash
-# Re-run inference with co-location detection
-python3 infer_connections_v2.py data/network_topology.json
+# Run inference with co-location detection
+meshnetmap infer -i data/network_topology.json
 
 # Generate dynamic visualization
 meshnetmap visualize -i data/network_topology_topo_v2.json \
@@ -211,7 +211,7 @@ Potential improvements:
 ## Troubleshooting
 
 **Co-located nodes not connected?**
-- Run `python3 infer_connections_v2.py` on your topology file
+- Run `meshnetmap infer -i <topology_file.json>`
 - Check that nodes have GPS coordinates
 - Verify nodes are within 11m of each other
 

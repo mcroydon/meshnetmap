@@ -18,7 +18,7 @@ The original inference script didn't create connections between them because:
 
 ## Solution
 
-Added **co-location detection** to `infer_connections_v2.py`:
+Added **co-location detection** to `meshnetmap/inference.py`:
 
 ### 1. GPS-Based Detection (`find_colocated_nodes()`)
 
@@ -80,13 +80,13 @@ Creating connections for co-located nodes:
 
 ### Files Modified
 
-1. **`infer_connections_v2.py`** (`find_colocated_nodes()`, connection creation logic)
+1. **`meshnetmap/inference.py`** - `find_colocated_nodes()`, connection creation logic
 2. **`meshnetmap/visualizer/templates/dynamic_network.html`**
    - Link opacity and dash handling for 'colocated' type
    - Dynamic link distance (20px for colocated, configurable for others)
    - Friendly type names in edge modal
    - Updated legend
-3. **`DYNAMIC_VIZ.md`** - Documentation updates
+3. **`docs/DYNAMIC_VIZ.md`** - Documentation updates
 
 ### Connection Data Structure
 
@@ -122,14 +122,11 @@ Creating connections for co-located nodes:
 ## Testing
 
 ```bash
-# Re-run inference with co-location detection
-python3 infer_connections_v2.py data/network_topology_20251006_221020.json
+# Run inference with co-location detection
+meshnetmap infer -i data/network_topology_20251006_221020.json
 
 # Generate dynamic visualization
-python3 test_dynamic_viz.py
-
-# View in browser
-open data/dynamic_test.html
+meshnetmap visualize -i data/network_topology_20251006_221020_topo_v2.json --show --dynamic
 ```
 
 The visualization now shows "Cool 🫘" and "Cedar Park 🦙" connected with a short green line, accurately representing their physical co-location!

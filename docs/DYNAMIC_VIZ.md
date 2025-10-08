@@ -53,7 +53,7 @@ Click any edge to open a modal showing:
 
 ### 4. Improved Multi-Hop Edge Inference
 
-The `infer_connections_v2.py` script now:
+The inference module (`meshnetmap/inference.py`, accessed via `meshnetmap infer` command) now:
 
 **Validates connections against routing evidence:**
 - Checks `routing_paths` data for observed packet flows
@@ -120,12 +120,12 @@ visualizer.create_dynamic_visualization('output.html')
 visualizer.save_visualization('output.html', dynamic=True)
 ```
 
-### Re-inference with Validation
+### Infer Connections
 
-Regenerate connections with improved validation:
+Analyze topology and infer connections with validation:
 
 ```bash
-python3 infer_connections_v2.py data/network_topology.json
+meshnetmap infer -i data/network_topology.json
 # Creates: data/network_topology_topo_v2.json
 ```
 
@@ -176,13 +176,13 @@ The visualization includes interactive controls:
 
 ```
 meshnetmap/
+├── cli.py                       # Command-line interface (infer, visualize, etc.)
+├── inference.py                 # Connection inference with routing validation
 ├── visualizer/
-│   ├── display.py              # Updated with dynamic visualization support
-│   ├── templates/
-│   │   └── dynamic_network.html  # D3.js template
-│   └── static/                  # (Future: separate CSS/JS files)
-├── infer_connections_v2.py     # Improved with routing validation
-└── test_dynamic_viz.py         # Simple test script
+│   ├── display.py               # Visualization support (static & dynamic)
+│   └── templates/
+│       └── dynamic_network.html # D3.js force-directed template
+└── test_dynamic_viz.py          # Simple test script
 ```
 
 ## Technical Details
@@ -270,8 +270,8 @@ Potential improvements:
 
 ### Basic Usage
 ```bash
-# Generate topology with improved inference
-python3 infer_connections_v2.py data/network_topology.json
+# Infer connections with routing validation
+meshnetmap infer -i data/network_topology.json
 
 # Create dynamic visualization
 meshnetmap visualize -i data/network_topology_topo_v2.json \
