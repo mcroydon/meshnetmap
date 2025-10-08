@@ -4,6 +4,7 @@ version = "1.0.0"
 description = "Map and visualize Meshtastic network topology via Bluetooth"
 readme = "README.md"
 requires-python = ">=3.8"
+license = {text = "GPL-3.0-or-later"}
 dependencies = [
     "meshtastic>=2.3.0",
     "bleak>=0.21.0",
